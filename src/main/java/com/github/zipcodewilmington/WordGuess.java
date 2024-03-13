@@ -13,32 +13,32 @@ public class WordGuess {
     private static String[] wordsArray = {"dog", "cat", "bog", "cut"};
     private static String randomWord;
     private static char[] guessedWord;
-    private static int maxTry = 6;
+    private static int maxTry = 0;
     private static int attemptsLeft;
 
     public WordGuess() {}
 
     public static void main(String[] args) {
-        WordGuess game = new WordGuess();
-        game.selectedWord();
-        game.initializeGameState();
-        game.runGame();
+        selectedWord();
+        initializeGameState();
+        runGame();
     }
 
-    private static void selectedWord() {
+    private static void selectedWord() {        // Selects a random word from the word array
         int randomIndex = (int) (Math.random()* wordsArray.length);
         randomWord = wordsArray[randomIndex];
     }
 
-    private static void initializeGameState() {
+    private static void initializeGameState() {     // Sets up a char array based on the selected words' length.
         guessedWord = new char[randomWord.length()];
+        maxTry = wordsArray.length-1;
 
         for (int i = 0; i < randomWord.length(); i++) {
             guessedWord[i] = '_';
         }
     }
 
-    private static void runGame() {
+    private static void runGame() {     // Starts the game and loops through prompting player for char input
         announceGame();
         Scanner scanner = new Scanner(System.in);
         attemptsLeft = maxTry;
@@ -50,13 +50,12 @@ public class WordGuess {
             System.out.println(guess);
 
             if (guess == '-') {
+                attemptsLeft = 0;
                 gameOver();
             } else {
                 process(guess);
             }
         }
-
-        scanner.close();
 
         if (isWordGuessed()) {
             playerWon();
@@ -112,14 +111,16 @@ public class WordGuess {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Would you like to play again? (y/n)");
 
-        char play = scanner.next().charAt(0);
+        String play = scanner.nextLine();
+        System.out.println(play);
 
-        if (play == 'y' || play == 'Y') {
+
+        if (play.equalsIgnoreCase("y")) {
+            selectedWord();
+            initializeGameState();
             runGame();
-        } else if (play == 'n' || play == 'N') {
-            gameOver();
         } else {
-            System.out.println("Error");
+            gameOver();
         }
     }
 
